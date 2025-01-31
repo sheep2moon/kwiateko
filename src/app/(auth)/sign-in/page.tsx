@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FormState, onLoginSubmitAction } from "@/app/actions";
-import { useActionState, useRef } from "react";
+import { startTransition, useActionState, useRef } from "react";
 
 export default function SignIn() {
     const formRef = useRef<HTMLFormElement>(null);
@@ -28,8 +28,9 @@ export default function SignIn() {
                 action={formAction}
                 onSubmit={event => {
                     event.preventDefault();
-                    const formElement = event.target as HTMLFormElement;
-                    form.handleSubmit(() => formAction(new FormData(formElement)))(event);
+                    form.handleSubmit(() => {
+                        startTransition(() => formAction(new FormData(formRef.current!)));
+                    })(event);
                 }}
             >
                 <div>

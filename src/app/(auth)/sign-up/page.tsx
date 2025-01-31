@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useActionState, useRef } from "react";
+import { startTransition, useActionState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -32,8 +32,9 @@ export default function SignUp() {
                     action={formAction}
                     onSubmit={event => {
                         event.preventDefault();
-                        const formElement = event.target as HTMLFormElement;
-                        form.handleSubmit(() => formAction(new FormData(formElement)))(event);
+                        form.handleSubmit(() => {
+                            startTransition(() => formAction(new FormData(formRef.current!)));
+                        })(event);
                     }}
                 >
                     <div className="flex flex-col gap-4">
