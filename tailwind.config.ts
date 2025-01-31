@@ -66,5 +66,6 @@ export default {
                 container: "calc(100vh - 4rem)"
             }
         }
-    }
+    },
+    plugins: [require("tailwindcss-animate")]
 } satisfies Config;

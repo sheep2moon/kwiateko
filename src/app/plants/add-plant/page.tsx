@@ -386,7 +386,7 @@ export default function AddPlant() {
                                 />
                             </CardContent>
                         </Card>
-                        <Button className="absolute top-4 right-8" type="submit">
+                        <Button className="fixed top-4 right-8" type="submit">
                             Dodaj
                         </Button>
                         <p>{state.message && state.message}</p>

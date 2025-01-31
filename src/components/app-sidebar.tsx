@@ -1,4 +1,4 @@
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "@/components/ui/sidebar";
 import { CircleUserRound, Flower, LogOut } from "lucide-react";
 import Link from "next/link";
 
@@ -10,15 +10,15 @@ const menuItems = [
 
 export function AppSidebar() {
     return (
-        <Sidebar>
+        <Sidebar collapsible="icon" className="top-[--header-height] !h-[calc(100svh-var(--header-height))]">
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Application</SidebarGroupLabel>
+                    <SidebarGroupLabel>Kwiateko</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {menuItems.map(item => (
                                 <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
+                                    <SidebarMenuButton variant="outline" asChild tooltip={item.title}>
                                         <Link href={item.href} className="text-lg">
                                             <item.icon />
                                             <span>{item.title}</span>
@@ -30,6 +30,7 @@ export function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
+            <SidebarRail />
             <SidebarFooter />
         </Sidebar>
     );
