@@ -1,42 +1,43 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { startTransition, useActionState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FormState, onSignUpSubmitAction } from "@/app/actions";
 import { signUpSchema } from "@/zod-schemas";
 import { z } from "zod";
+import { authClient } from "../../../lib/auth-client";
+
+type FormDataType = z.output<typeof signUpSchema>;
 
 export default function SignUp() {
-    const formRef = useRef<HTMLFormElement>(null);
-    const [state, formAction] = useActionState<FormState, FormData>(onSignUpSubmitAction, { message: "" });
-
-    const form = useForm<z.output<typeof signUpSchema>>({
+    const form = useForm<FormDataType>({
         resolver: zodResolver(signUpSchema),
         defaultValues: {
             email: "",
             password: "",
-            confirmPassword: "",
-            ...(state?.fields ?? {})
+            confirmPassword: ""
         }
     });
 
+    const onSubmit = async (data: FormDataType) => {
+        const auth = await authClient.signUp.email({
+            email: data.email,
+            password: data.password,
+            name: "test",
+            image: "s"
+        });
+        if (auth.error) {
+            console.log(auth.error);
+        } else {
+            console.log(auth.data);
+        }
+    };
+
     return (
-        <div className="max-w-xl mx-auto mt-16">
+        <div className="mx-auto my-auto">
             <Form {...form}>
-                <form
-                    className="flex flex-col gap-2"
-                    ref={formRef}
-                    action={formAction}
-                    onSubmit={event => {
-                        event.preventDefault();
-                        form.handleSubmit(() => {
-                            startTransition(() => formAction(new FormData(formRef.current!)));
-                        })(event);
-                    }}
-                >
+                <form className="flex flex-col gap-2" onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="flex flex-col gap-4">
                         <FormField
                             control={form.control}
@@ -80,7 +81,6 @@ export default function SignUp() {
                         />
                     </div>
                     <Button type="submit">Zarejestruj</Button>
-                    <p>{state.message && state.message}</p>
                 </form>
             </Form>
         </div>

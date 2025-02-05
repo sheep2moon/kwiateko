@@ -6,65 +6,87 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { FormState, onLoginSubmitAction } from "@/app/actions";
-import { startTransition, useActionState, useRef } from "react";
+
+import { authClient } from "../../../lib/auth-client";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import GoogleLogo from "../../../assets/icons/GoogleIcon";
+
+type FormDataType = z.output<typeof signInSchema>;
 
 export default function SignIn() {
-    const formRef = useRef<HTMLFormElement>(null);
-    const [state, formAction] = useActionState<FormState, FormData>(onLoginSubmitAction, { message: "" });
-    const form = useForm<z.output<typeof signInSchema>>({
+    const form = useForm<FormDataType>({
         resolver: zodResolver(signInSchema),
         defaultValues: {
             email: "",
-            password: "",
-            ...(state?.fields ?? {})
+            password: ""
         }
     });
 
-    return (
-        <Form {...form}>
-            <form
-                ref={formRef}
-                action={formAction}
-                onSubmit={event => {
-                    event.preventDefault();
-                    form.handleSubmit(() => {
-                        startTransition(() => formAction(new FormData(formRef.current!)));
-                    })(event);
-                }}
-            >
-                <div>
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="Email" />
-                                </FormControl>
+    const onSubmit = async (data: FormDataType) => {
+        const auth = await authClient.signIn.email({
+            email: data.email,
+            password: data.password
+        });
+        if (auth.error) {
+            console.log(auth.error);
+        } else {
+            console.log(auth.data);
+        }
+    };
 
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Hasło</FormLabel>
-                                <FormControl>
-                                    <Input type="password" {...field} placeholder="" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-                <Button type="submit">Zaloguj</Button>
-                <p>{state.message && state.message}</p>
-            </form>
-        </Form>
+    const handleGoogleSignIn = () => {
+        authClient.signIn.social({ provider: "google" });
+    };
+
+    return (
+        <div className="mx-auto my-auto">
+            <Card className="">
+                <CardHeader>
+                    <CardTitle className="text-3xl">Logowanie</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-2">
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Email</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} placeholder="Email" />
+                                            </FormControl>
+
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Hasło</FormLabel>
+                                            <FormControl>
+                                                <Input type="password" {...field} placeholder="" />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                            <Button type="submit">Zaloguj</Button>
+                        </form>
+                    </Form>
+                    <div className="flex flex-col gap-2 mt-4">
+                        <Button variant="outline" onClick={handleGoogleSignIn}>
+                            <GoogleLogo />
+                            Zaloguj za pomocą Google
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

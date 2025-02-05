@@ -11,7 +11,9 @@ export const env = createEnv({
         S3_SECRET_KEY: z.string(),
         NEXT_PUBLIC_S3_BUCKET_NAME: z.string(),
         NEXT_PUBLIC_S3_REGION: z.string(),
-        SESSION_SECRET_PASSWORD: z.string()
+        SESSION_SECRET_PASSWORD: z.string(),
+        BETTER_AUTH_SECRET: z.string(),
+        BETTER_AUTH_URL: z.string()
     },
 
     /**

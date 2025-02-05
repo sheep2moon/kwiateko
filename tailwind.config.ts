@@ -63,7 +63,10 @@ export default {
                 sm: "calc(var(--radius) - 4px)"
             },
             minHeight: {
-                container: "calc(100vh - 4rem)"
+                container: "calc(100svh - var(--header-height))"
+            },
+            height: {
+                container: "calc(100svh - var(--header-height))"
             }
         }
     },

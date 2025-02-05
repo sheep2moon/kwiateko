@@ -31,9 +31,9 @@ export default function RootLayout({
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <SidebarProvider className="flex flex-col">
                     <SiteHeader />
-                    <div className="flex flex-1">
+                    <div className="flex min-h-container">
                         <AppSidebar />
-                        <SidebarInset>{children}</SidebarInset>
+                        <SidebarInset className="">{children}</SidebarInset>
                     </div>
                 </SidebarProvider>
             </body>

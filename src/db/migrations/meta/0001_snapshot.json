@@ -1,6 +1,6 @@
 {
-  "id": "39b33f3a-b7b4-4580-b1d7-22f85c34c6e2",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "467be036-2d29-43f0-a710-383326e20794",
+  "prevId": "39b33f3a-b7b4-4580-b1d7-22f85c34c6e2",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -359,7 +359,8 @@
           "name": "is_moderator",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},

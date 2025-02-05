@@ -56,7 +56,7 @@ export default function AddPlant() {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:gap-x-4 gap-y-4 lg:grid-cols-3 min-h-container p-2 lg:p-4">
+        <div className="grid grid-cols-1 lg:gap-x-4 gap-y-4 lg:grid-cols-3 min-h-full p-2 lg:p-4">
             <Card className="col-span-1 w-full">
                 <CardHeader>
                     <CardTitle>Zdjęcia</CardTitle>
@@ -386,7 +386,7 @@ export default function AddPlant() {
                                 />
                             </CardContent>
                         </Card>
-                        <Button className="fixed top-4 right-8" type="submit">
+                        <Button className="fixed top-1.5 right-8 z-30" type="submit">
                             Dodaj
                         </Button>
                         <p>{state.message && state.message}</p>

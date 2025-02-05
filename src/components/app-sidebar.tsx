@@ -1,11 +1,13 @@
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "@/components/ui/sidebar";
-import { CircleUserRound, Flower, LogOut } from "lucide-react";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "@/components/ui/sidebar";
+import { CircleUserRound, DiamondPlus, Flower, LogIn } from "lucide-react";
 import Link from "next/link";
+import CustomSidebarFooter from "./sidebar-footer";
 
 const menuItems = [
     { title: "Dodaj Rośline", href: "/plants/add-plant", icon: Flower },
     { title: "Konto", href: "/account", icon: CircleUserRound },
-    { title: "Wyloguj", href: "/sign-out", icon: LogOut }
+    { title: "Zarejestruj", href: "/sign-up", icon: DiamondPlus },
+    { title: "Zaloguj", href: "/sign-in", icon: LogIn }
 ];
 
 export function AppSidebar() {
@@ -31,7 +33,7 @@ export function AppSidebar() {
                 </SidebarGroup>
             </SidebarContent>
             <SidebarRail />
-            <SidebarFooter />
+            <CustomSidebarFooter />
         </Sidebar>
     );
 }

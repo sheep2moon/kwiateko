@@ -1,0 +1,1 @@
+ALTER TABLE "user" ALTER COLUMN "is_moderator" SET DEFAULT false;
