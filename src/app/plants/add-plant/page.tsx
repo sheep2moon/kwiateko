@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { z } from "zod";
 import { newPlantSchema } from "../../../zod-schemas/new-plant.schema";
@@ -9,16 +10,20 @@ import { Textarea } from "../../../components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
 import { growthHabitEnum, soilPhEnum, soilTypeEnum, standingEnum } from "../../../db/schema/plants";
 import { Button } from "../../../components/ui/button";
-import { startTransition, useActionState, useRef } from "react";
+import { startTransition, useActionState, useRef, useState } from "react";
 import { onAddPlantSubmitAction, FormState } from "@/app/actions";
 import { Slider } from "../../../components/ui/slider";
 import { polish_month_names } from "../../../lib/const";
 import ImageInput from "../../../components/ui/image-input";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { createS3UploadUrl } from "../../actions/image-actions";
+import { uploadFileToS3 } from "../../../lib/utils";
 
 export default function AddPlant() {
     const formRef = useRef<HTMLFormElement>(null);
     const [state, formAction] = useActionState<FormState, FormData>(onAddPlantSubmitAction, { message: "" });
+    const [mainImage, setMainImage] = useState<File | null>(null);
+    const [images, setImages] = useState<File[]>([]);
 
     const form = useForm<z.infer<typeof newPlantSchema>>({
         resolver: zodResolver(newPlantSchema),
@@ -31,7 +36,7 @@ export default function AddPlant() {
             common_names: "",
             description: "",
             slug: "",
-            image_url: "",
+            main_image_url: "",
             growth_habit: "wzniosły",
             growth_rate: 2,
             water_requirement: 2,
@@ -47,9 +52,21 @@ export default function AddPlant() {
 
     const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log(form.getValues());
-        console.log(formRef.current?.dataset);
+        if (mainImage) {
+            const uploadUrl = await createS3UploadUrl(`plant-images/${form.getValues().slug}/main.jpg`);
+            const mainImageUrl = await uploadFileToS3(mainImage, uploadUrl);
+            if (mainImageUrl) form.setValue("main_image_url", mainImageUrl);
+        }
 
+        const imagesUrls = [];
+        for (const image of images) {
+            const uploadUrl = await createS3UploadUrl(`plant-images/${form.getValues().slug}/${image.name}`);
+            const imageUrl = await uploadFileToS3(image, uploadUrl);
+            console.log(form.getValues().images_urls);
+
+            if (imageUrl) imagesUrls.push(imageUrl);
+        }
+        form.setValue("images_urls", imagesUrls);
         form.handleSubmit(() => {
             startTransition(() => formAction(new FormData(formRef.current!)));
         })(event);
@@ -59,11 +76,28 @@ export default function AddPlant() {
         <div className="grid grid-cols-1 lg:gap-x-4 gap-y-4 lg:grid-cols-3 min-h-full p-2 lg:p-4">
             <Card className="col-span-1 w-full">
                 <CardHeader>
-                    <CardTitle>Zdjęcia</CardTitle>
+                    <CardTitle>Zdjęcie główne</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="w-full">
-                        <ImageInput onFileAdd={console.log} />
+                        {mainImage ? (
+                            <img src={URL.createObjectURL(mainImage)} alt="main" className="mx-auto border border-gray-200 w-full aspect-video" />
+                        ) : (
+                            <ImageInput name="main-image" className="min-h-48 aspect-video" onFileAdd={file => setMainImage(file)} />
+                        )}
+                    </div>
+                </CardContent>
+                <CardHeader>
+                    <CardTitle>Zdjęcia dodatkowe</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="w-full">
+                        <ImageInput multiple name="images" onFileAdd={files => setImages(prev => [...prev, ...files])} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 mt-4">
+                        {images.map((image, i) => (
+                            <img key={i} src={URL.createObjectURL(image)} alt="additional" className="mx-auto border border-gray-200 aspect-video" />
+                        ))}
                     </div>
                 </CardContent>
             </Card>
@@ -116,21 +150,6 @@ export default function AddPlant() {
                                             </div>
                                             <FormControl>
                                                 <Input {...field} placeholder="np. rozplenica-japonska" />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    name="image_url"
-                                    control={form.control}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <div className="flex gap-4 items-center">
-                                                <FormLabel>Image URL</FormLabel>
-                                                <FormMessage />
-                                            </div>
-                                            <FormControl>
-                                                <Input {...field} placeholder="..." />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -389,7 +408,6 @@ export default function AddPlant() {
                         <Button className="fixed top-1.5 right-8 z-30" type="submit">
                             Dodaj
                         </Button>
-                        <p>{state.message && state.message}</p>
                     </form>
                 </Form>
             </div>

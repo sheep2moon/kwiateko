@@ -9,6 +9,7 @@ export const env = createEnv({
         GOOGLE_CLIENT_SECRET: z.string(),
         S3_ACCESS_KEY: z.string(),
         S3_SECRET_KEY: z.string(),
+        S3_REGION: z.string(),
         NEXT_PUBLIC_S3_BUCKET_NAME: z.string(),
         NEXT_PUBLIC_S3_REGION: z.string(),
         SESSION_SECRET_PASSWORD: z.string(),

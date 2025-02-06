@@ -4,7 +4,7 @@ export const signUpSchema = z
     .object({
         email: z.string().email({ message: "Nieprawidłowy adres e-mail." }),
         password: z.string().min(8, { message: "Hasło musi mieć przynajmniej 8 znaków." }),
-        confirmPassword: z.string().min(8, { message: "Hasło musi mieć przynajmniej 8 znaków." })
+        confirmPassword: z.string().min(8, { message: "Potwierdź hasło." })
     })
     .refine(data => data.password === data.confirmPassword, {
         message: "Hasła nie są identyczne.",

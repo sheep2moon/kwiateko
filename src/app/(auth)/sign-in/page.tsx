@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { authClient } from "../../../lib/auth-client";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
 import GoogleLogo from "../../../assets/icons/GoogleIcon";
+import Link from "next/link";
 
 type FormDataType = z.output<typeof signInSchema>;
 
@@ -40,7 +41,7 @@ export default function SignIn() {
 
     return (
         <div className="mx-auto my-auto">
-            <Card className="">
+            <Card className="min-w-96">
                 <CardHeader>
                     <CardTitle className="text-3xl">Logowanie</CardTitle>
                 </CardHeader>
@@ -79,6 +80,12 @@ export default function SignIn() {
                             <Button type="submit">Zaloguj</Button>
                         </form>
                     </Form>
+                    <div className="flex items-center justify-center gap-2 mt-4 text-lg">
+                        <p>Nie masz konta?</p>
+                        <Link className="text-sky-600" href="/sign-up">
+                            Załóż konto
+                        </Link>
+                    </div>
                     <div className="flex flex-col gap-2 mt-4">
                         <Button variant="outline" onClick={handleGoogleSignIn}>
                             <GoogleLogo />
