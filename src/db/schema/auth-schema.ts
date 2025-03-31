@@ -8,7 +8,10 @@ export const user = pgTable("user", {
     image: text("image"),
     createdAt: timestamp("created_at").notNull(),
     updatedAt: timestamp("updated_at").notNull(),
-    isModerator: boolean("is_moderator").notNull().default(false)
+    role: text("role"),
+    banned: boolean("banned"),
+    banReason: text("ban_reason"),
+    banExpires: timestamp("ban_expires")
 });
 
 export const session = pgTable("session", {
@@ -21,7 +24,8 @@ export const session = pgTable("session", {
     userAgent: text("user_agent"),
     userId: text("user_id")
         .notNull()
-        .references(() => user.id)
+        .references(() => user.id, { onDelete: "cascade" }),
+    impersonatedBy: text("impersonated_by")
 });
 
 export const account = pgTable("account", {
@@ -30,7 +34,7 @@ export const account = pgTable("account", {
     providerId: text("provider_id").notNull(),
     userId: text("user_id")
         .notNull()
-        .references(() => user.id),
+        .references(() => user.id, { onDelete: "cascade" }),
     accessToken: text("access_token"),
     refreshToken: text("refresh_token"),
     idToken: text("id_token"),

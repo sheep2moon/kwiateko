@@ -1,6 +1,7 @@
 // import { SessionOptions } from "iron-session";
 // import { env } from "@/env";
 import { betterAuth } from "better-auth";
+import { admin } from "better-auth/plugins/admin";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../db/db";
 import { env } from "../env";
@@ -41,5 +42,6 @@ export const auth = betterAuth({
             clientId: env.GOOGLE_CLIENT_ID,
             clientSecret: env.GOOGLE_CLIENT_SECRET
         }
-    }
+    },
+    plugins: [admin()]
 });

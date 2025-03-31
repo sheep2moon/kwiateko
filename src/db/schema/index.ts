@@ -1,7 +1,7 @@
-import * as users from "./users";
 import * as plants from "./plants";
+import * as authSchema from "./auth-schema";
 
 export const schema = {
-    ...users,
+    ...authSchema,
     ...plants
 };
